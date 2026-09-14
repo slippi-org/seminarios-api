@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Seminarios: the database and its WAL sidecars are never committed.
+# The real one lives on the Pi at /home/aaron/docker/seminarios/data/.
+data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# setuptools editable-install metadata
+*.egg-info/
