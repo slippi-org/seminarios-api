@@ -41,6 +41,10 @@ spoken="$(printf %s "$PLAYER" | tr 'A-Z' 'a-z' | tr '-' ' ')"
 [ "$(code -H "Authorization: Bearer $spoken" "$API/me")" = 200 ] \
   && ok "token normalization accepts the spoken form" || bad "normalization"
 
+roster="$(body -H "Authorization: Bearer $PLAYER" "$API/roster")"
+echo "$roster" | grep -q '"players"' && ! echo "$roster" | grep -q token_hash \
+  && ok "/roster lists players without secrets" || bad "/roster"
+
 evt="evt_$STAMP"
 c=$(code -X POST "$API/events" -H "Authorization: Bearer $PLAYER" \
       -H 'Content-Type: application/json' \

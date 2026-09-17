@@ -16,7 +16,7 @@ run the thing.
 
 ```bash
 uv venv && uv pip install -e '.[dev]'
-uv run pytest -q                          # 56 tests
+uv run pytest -q                          # 67 tests
 
 # a local server against a throwaway database
 SEM_DB_PATH=./data/dev.sqlite \
@@ -66,6 +66,7 @@ everything except `/healthz`.
 |---|---|---|
 | `GET` | `/healthz` | unauthenticated; DB ping for the compose health check |
 | `GET` | `/me` | player, role, characters, server time |
+| `GET` | `/roster` | every player's name and every character's name/colour, for attribution; inactive rows flagged, not hidden |
 | `GET` | `/state?since=&scope=` | delta sync; tombstones included when `since` is given |
 | `POST` `PATCH` `DELETE` | `/events`, `/events/{id}` | |
 | `POST` `PATCH` `DELETE` | `/notes`, `/notes/{id}` | |
@@ -96,9 +97,9 @@ app/
   store.py     queries and row serialization
   limits.py    per-token write and per-IP failed-auth windows
   deps.py      FastAPI dependencies
-  routes/      me, state, events, notes, settings
+  routes/      me, roster, state, events, notes, settings
 manage.py      player/character CLI
-tests/         56 tests, weighted toward visibility and auth
+tests/         67 tests, weighted toward visibility and auth
 ```
 
 ## 🐳 Deployment

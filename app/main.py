@@ -12,7 +12,7 @@ from fastapi.responses import JSONResponse
 
 from . import config, db
 from .deps import get_conn
-from .routes import events, me, notes, settings, state
+from .routes import events, me, notes, roster, settings, state
 
 API_PREFIX = "/api/v1"
 
@@ -68,5 +68,5 @@ def healthz(conn: sqlite3.Connection = Depends(get_conn)):
     return {"status": "ok"}
 
 
-for module in (me, state, events, notes, settings):
+for module in (me, roster, state, events, notes, settings):
     app.include_router(module.router, prefix=API_PREFIX)

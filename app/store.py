@@ -97,3 +97,24 @@ def characters_of(conn: sqlite3.Connection, player_id: str) -> list[dict]:
             (player_id,),
         )
     ]
+
+
+def all_players(conn: sqlite3.Connection) -> list[dict]:
+    """Every player, for the roster. Explicit columns: token_hash must never
+    ride along, and role is not the roster's business."""
+    return [
+        row_to_dict(r)
+        for r in conn.execute(
+            "SELECT id, display_name, active FROM players ORDER BY display_name, id"
+        )
+    ]
+
+
+def all_characters(conn: sqlite3.Connection) -> list[dict]:
+    return [
+        row_to_dict(r)
+        for r in conn.execute(
+            "SELECT id, player_id, name, kind, color, active FROM characters"
+            "  ORDER BY name, id"
+        )
+    ]
