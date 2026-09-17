@@ -33,3 +33,17 @@ def test_unknown_origin_is_not_granted_access(client):
 
 def test_configured_origins_never_contain_a_wildcard():
     assert "*" not in config.CORS_ORIGINS
+
+
+def test_preflight_allows_every_method_the_contract_uses(client):
+    """Caught in Phase 3: PUT was missing, so a browser's PUT /settings never left
+    the page while curl (no preflight) worked fine."""
+    for method, path in (("POST", "/events"), ("PATCH", "/events/x"), ("DELETE", "/events/x"),
+                         ("PUT", "/settings"), ("GET", "/roster")):
+        r = client.options(f"{API}{path}", headers={
+            "Origin": ORIGIN,
+            "Access-Control-Request-Method": method,
+            "Access-Control-Request-Headers": "authorization,content-type",
+        })
+        assert r.status_code == 200, (method, r.text)
+        assert method in r.headers["access-control-allow-methods"], method

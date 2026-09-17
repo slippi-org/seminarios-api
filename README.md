@@ -16,7 +16,7 @@ run the thing.
 
 ```bash
 uv venv && uv pip install -e '.[dev]'
-uv run pytest -q                          # 67 tests
+uv run pytest -q                          # 68 tests
 
 # a local server against a throwaway database
 SEM_DB_PATH=./data/dev.sqlite \
@@ -99,7 +99,7 @@ app/
   deps.py      FastAPI dependencies
   routes/      me, roster, state, events, notes, settings
 manage.py      player/character CLI
-tests/         67 tests, weighted toward visibility and auth
+tests/         68 tests, weighted toward visibility and auth
 ```
 
 ## 🐳 Deployment
