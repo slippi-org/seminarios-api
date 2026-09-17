@@ -106,7 +106,9 @@ tests/         56 tests, weighted toward visibility and auth
 The compose service block, the Cloudflare tunnel, and the backup/export scripts live in
 `gitility`, not here. Two things that bite:
 
-- The live compose directory on the Pi is `/home/aaron/docker`, **not** the copy in
-  `gitility/dotfiles/docker/`. Editing the copy deploys nothing.
+- Compose runs from `/home/aaron/docker`, whose `docker-compose.yml` is a symlink into
+  the Pi's gitility checkout. `git pull` there updates the live file; never copy over it.
+- Create `~/docker/seminarios/data` as `aaron` before the first `compose up`, or Docker
+  creates it as root and the container cannot write the database.
 - The database is a bind mount, so the container runs as uid 1000 to match `aaron` on
   `ag-rpi5`. Change one and you must change the other.
