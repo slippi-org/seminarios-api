@@ -13,6 +13,9 @@ dev = ["pytest>=8", "httpx>=0.27"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Tests import `tests.conftest`; keep the repo root importable regardless of
+# how the venv was synced (uv run vs. uv pip install -e).
+pythonpath = ["."]
 filterwarnings = [
     "error::DeprecationWarning",
     # anyio's own lazy-import shim, triggered by starlette's TestClient.
