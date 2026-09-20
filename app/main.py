@@ -38,6 +38,10 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
+    # Without this a browser cannot read Retry-After cross-origin -- it is not a
+    # CORS-safelisted response header -- and the outbox would be pacing on a
+    # value it can only see when running from localhost.
+    expose_headers=["Retry-After"],
     max_age=600,
 )
 

@@ -33,8 +33,9 @@ def current_player(
     request: Request, conn: sqlite3.Connection = Depends(get_conn)
 ) -> sqlite3.Row:
     ip = client_ip(request)
-    if limits.failed_auth_exceeded(ip):
-        raise HTTPException(429, "too many failed authentications")
+    locked_out = limits.failed_auth_exceeded(ip)
+    if locked_out:
+        raise HTTPException(429, locked_out.reason, headers=_retry_after(locked_out))
 
     token = auth.bearer_from_header(request.headers.get("authorization"))
     player = auth.lookup(conn, token)
@@ -45,6 +46,15 @@ def current_player(
 
 
 def guard_write(player: sqlite3.Row) -> None:
-    reason = limits.check_write(player["id"])
-    if reason:
-        raise HTTPException(429, reason)
+    refusal = limits.check_write(player["id"])
+    if refusal:
+        raise HTTPException(429, refusal.reason, headers=_retry_after(refusal))
+
+
+def _retry_after(refusal: limits.Refusal) -> dict[str, str]:
+    """A 429 that does not say when to come back makes every client guess.
+
+    Browsers cannot read this header cross-origin unless it is exposed, which
+    `main.py` does; the outbox in `seminarios/app.js` paces its flush on it.
+    """
+    return {"Retry-After": str(refusal.retry_after)}
